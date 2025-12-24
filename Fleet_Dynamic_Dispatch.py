@@ -39,9 +39,10 @@ def calculate_fuel_cost(distance_km, grade_percent):
     return total_fuel_liters, opt_speed_kmh
 
 def get_user_grade_input(location_id):
-
+    
     # Ask user for road geometry.
-
+    # Constraint Added: Enforces grade strictly between 8% and 10%.
+    
     print(f"\n--- Configure Road to {location_id} ---")
     while True:
         try:
@@ -51,10 +52,24 @@ def get_user_grade_input(location_id):
             if run <= 0:
                 print("   Error: Distance must be positive.")
                 continue
-                
+            
+            # Calculate Grade
             grade = (rise / run) * 100
-            print(f"   -> Calculated Grade: {grade:.2f}%")
+            
+            # ==========================================
+            # NEW CLAUSE: 8% to 10% CONSTRAINT
+            # ==========================================
+            if grade < 8 or grade > 10:
+                print(f"   [!] INVALID GRADE: {grade:.2f}%")
+                print("   Constraint: Road grade must be between 8% and 10%.")
+                print("   Please adjust your Rise/Run values.")
+                # The 'continue' keyword restarts the loop, asking for input again
+                continue 
+            
+            # If we pass the check, accept the value
+            print(f"   -> Accepted Grade: {grade:.2f}%")
             return grade
+
         except ValueError:
             print("   Invalid input. Please enter numbers.")
 
